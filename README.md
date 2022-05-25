@@ -59,4 +59,4 @@ Chat App = Blah Blah
   - user
   - channels
 
-NOTES: Next time - details on internals of database
+NOTES: Next time - details on internals of database index
