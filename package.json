@@ -1,0 +1,15 @@
+{
+  "name": "growing-in-app-development",
+  "version": "1.0.0",
+  "description": "Chat App = Blah Blah",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "knex": "2.0.0",
+    "pg": "8.7.3"
+  }
+}
