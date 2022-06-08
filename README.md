@@ -58,5 +58,3 @@ Chat App = Blah Blah
   - id
   - user
   - channels
-
-NOTES: Next time - details on internals of database index
