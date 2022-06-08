@@ -5,7 +5,6 @@ const cors = require("cors");
 const compression = require("compression");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const cors = require("cors");
 const knexConfig = require("../knexfile");
 
 const env = process.env.NODE_ENV || "development";
@@ -45,8 +44,14 @@ const init = async () => {
   // read user api route
   app.get("/users/:userId", async (req, res) => {
     try {
+      const userId = req.params.userId;
+
+      if (!userId) {
+        res.status(404).send("Missing id of item to update.");
+      }
+
       const users = await knex("users").where({
-        id: req.params.userId,
+        id: userId,
       });
 
       if (!users.length) {
@@ -63,6 +68,8 @@ const init = async () => {
   app.post("/users", (req, res) => {
     knex("users")
       .insert(req.body)
+      .returning("*")
+      .then(([item]) => item)
       .then((user) => {
         res.send(user);
       })
@@ -91,6 +98,8 @@ const init = async () => {
 
       return res.send(updatedUser);
     } catch (error) {
+      console.log("error fun looking");
+      console.log(error);
       res.status(500).send("Something broke!");
     }
   });

@@ -29,6 +29,37 @@ const init = async () => {
     },
   });
 
+  // This rule is to show validation/joi errors when not in production.
+  // This needs to be at the base of the server before routes are included.
+  server.rules(() => {
+    return {
+      validate: {
+        failAction: async (request, h, err) => {
+          if (isProduction) {
+            // In prod, log a limited error message and throw the default Bad Request error.
+            throw boom.badRequest(`Invalid request payload input`);
+          } else {
+            // During development, log and respond with the full error.
+            console.error(err);
+            throw boom.badRequest(err.message);
+          }
+        },
+      },
+      response: {
+        failAction: (request, h, err) => {
+          if (isProduction) {
+            // In prod, log a limited error message and throw the default Bad Request error.
+            throw boom.badRequest(`Invalid request payload input`);
+          } else {
+            // During development, log and respond with the full error.
+            console.error(err);
+            throw boom.badRequest(err.message);
+          }
+        },
+      },
+    };
+  });
+
   server.route({
     method: "GET",
     path: "/users/{userId}",
@@ -48,7 +79,7 @@ const init = async () => {
         return boom.notFound("User not found");
       }
 
-      return res.send(users[0]);
+      return users[0];
     },
   });
 
@@ -56,7 +87,10 @@ const init = async () => {
     method: "POST",
     path: "/users",
     handler: (request, h) => {
-      const user = await knex("users").insert(request.payload);
+      const user = await knex("users")
+        .insert(request.payload)
+        .returning("*")
+        .then(([item]) => item);
 
       return user;
     },
