@@ -58,3 +58,9 @@ Chat App = Blah Blah
   - id
   - user
   - channels
+
+// TODO cascade delete of user associated foreign tables
+// Example: table.uuid("created_by").references("users.id").index().onDelete("CASCADE");
+// Another option is .onDelete("SET NULL")
+// Don't delete users and just turn them inactive. To do this we would need a status property on the user.
+// TODO add knex camelCase to snake_case converter
