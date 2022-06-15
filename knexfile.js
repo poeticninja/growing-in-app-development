@@ -1,4 +1,14 @@
-// Update with your config settings.
+const { camelCase, mapKeys, snakeCase } = require("lodash");
+
+const camelCaseKeys = (obj) => mapKeys(obj, (_, key) => camelCase(key));
+
+const postProcessResponse = (response) =>
+  Array.isArray(response)
+    ? response.map(camelCaseKeys)
+    : camelCaseKeys(response);
+
+const wrapIdentifier = (value, originalImplementation) =>
+  originalImplementation(value === "*" ? value : snakeCase(value));
 
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
@@ -18,6 +28,8 @@ module.exports = {
     migrations: {
       tableName: "knex_migrations",
     },
+    postProcessResponse,
+    wrapIdentifier,
   },
 
   staging: {
@@ -34,6 +46,8 @@ module.exports = {
     migrations: {
       tableName: "knex_migrations",
     },
+    postProcessResponse,
+    wrapIdentifier,
   },
 
   production: {
@@ -50,5 +64,7 @@ module.exports = {
     migrations: {
       tableName: "knex_migrations",
     },
+    postProcessResponse,
+    wrapIdentifier,
   },
 };
