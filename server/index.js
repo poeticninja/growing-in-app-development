@@ -6,6 +6,7 @@ const compression = require("compression");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const knexConfig = require("../knexfile");
+const channels = require("./channels");
 
 const env = process.env.NODE_ENV || "development";
 
@@ -20,6 +21,11 @@ const pingDatabaseConnection = async () => {
     error.message = message + (error.message ? `: ${error.message}` : "");
     throw error;
   }
+};
+
+const services = {
+  app,
+  knex,
 };
 
 const init = async () => {
@@ -120,6 +126,9 @@ const init = async () => {
       res.status(500).send("Something broke!");
     }
   });
+
+  channels(services);
+  messages(services);
 
   await pingDatabaseConnection();
   await knex.migrate.latest();
