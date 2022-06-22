@@ -5,6 +5,8 @@ const cors = require("cors");
 const compression = require("compression");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
+const ms = require("ms");
 const knexConfig = require("../knexfile");
 const users = require("./users");
 const channels = require("./channels");
@@ -36,6 +38,13 @@ const init = async () => {
 
   app.use(helmet());
   app.use(cors());
+  app.use(
+    cookieSession({
+      name: "blah-blah-api-1",
+      secret: "somereallylongsecret12378091758619058t619784650897089",
+      maxAge: ms("7 days"),
+    })
+  );
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(cookieParser());

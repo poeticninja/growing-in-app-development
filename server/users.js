@@ -1,4 +1,24 @@
 module.exports = ({ app, knex }) => {
+  // TODO: Login Route - @poeticninja
+  // create user api route
+  app.post("/login", (req, res) => {
+    const { email } = req.body;
+    const user = await knex("users")
+      .where({
+        email,
+      })
+      .then(([item]) => item);
+    
+    res.setuserstate("userloginstate", user);
+    res.send("Login success!");
+  });
+
+  // TODO: Logout Route - @poeticninja
+  // read user api route
+  app.get("/logout", async (req, res) => {
+    res.
+  });
+
   // read user api route
   app.get("/users/:userId", async (req, res) => {
     try {
