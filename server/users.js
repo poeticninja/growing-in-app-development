@@ -1,23 +1,23 @@
 module.exports = ({ app, knex }) => {
   // TODO: Login Route - @poeticninja
   // create user api route
-  app.post("/login", (req, res) => {
-    const { email } = req.body;
-    const user = await knex("users")
-      .where({
-        email,
-      })
-      .then(([item]) => item);
-    
-    res.setuserstate("userloginstate", user);
-    res.send("Login success!");
-  });
+  // app.post("/login", (req, res) => {
+  //   const { email } = req.body;
+  //   const user = await knex("users")
+  //     .where({
+  //       email,
+  //     })
+  //     .then(([item]) => item);
 
-  // TODO: Logout Route - @poeticninja
-  // read user api route
-  app.get("/logout", async (req, res) => {
-    res.
-  });
+  //   res.setuserstate("userloginstate", user);
+  //   res.send("Login success!");
+  // });
+
+  // // TODO: Logout Route - @poeticninja
+  // // read user api route
+  // app.get("/logout", async (req, res) => {
+  //   res.
+  // });
 
   // read user api route
   app.get("/users/:userId", async (req, res) => {
@@ -43,17 +43,18 @@ module.exports = ({ app, knex }) => {
   });
 
   // create user api route
-  app.post("/users", (req, res) => {
-    knex("users")
-      .insert(req.body)
-      .returning("*")
-      .then(([item]) => item)
-      .then((user) => {
-        res.send(user);
-      })
-      .catch(() => {
-        res.status(500).send("Something broke!");
-      });
+  app.post("/users", async (req, res) => {
+    try {
+      await knex("users")
+        .insert(req.body)
+        .returning("*")
+        .then(([item]) => item)
+        .then((user) => {
+          res.send(user);
+        });
+    } catch (error) {
+      res.status(500).send("Something broke!");
+    }
   });
 
   // update user api route
