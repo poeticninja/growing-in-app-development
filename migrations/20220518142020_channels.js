@@ -8,7 +8,7 @@ exports.up = function (knex) {
     table.timestamp("created_at").notNullable().defaultTo(knex.fn.now());
     table.timestamp("updated_at").notNullable().defaultTo(knex.fn.now());
     table.uuid("created_by").references("users.id").index();
-    table.string("type");
+    table.string("type"); // type could be channel or group
     table.string("name");
   });
 };
