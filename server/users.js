@@ -38,6 +38,7 @@ module.exports = ({ app, knex }) => {
 
       return res.send(users[0]);
     } catch (error) {
+      console.error(error);
       res.status(500).send("Something broke!");
     }
   });
@@ -53,6 +54,7 @@ module.exports = ({ app, knex }) => {
           res.send(user);
         });
     } catch (error) {
+      console.error(error);
       res.status(500).send("Something broke!");
     }
   });
@@ -77,7 +79,6 @@ module.exports = ({ app, knex }) => {
 
       return res.send(updatedUser);
     } catch (error) {
-      console.log("error fun looking");
       console.log(error);
       res.status(500).send("Something broke!");
     }
@@ -96,6 +97,7 @@ module.exports = ({ app, knex }) => {
 
       res.send("Success");
     } catch (error) {
+      console.error(error);
       res.status(500).send("Something broke!");
     }
   });

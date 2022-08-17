@@ -14,6 +14,24 @@ const wrapIdentifier = (value, originalImplementation) =>
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 module.exports = {
+  test: {
+    client: "postgresql",
+    connection: {
+      database: "blah_blah",
+      user: "smaddox",
+      // password: "password",
+    },
+    pool: {
+      min: 2,
+      max: 10,
+    },
+    migrations: {
+      tableName: "knex_migrations",
+    },
+    postProcessResponse,
+    wrapIdentifier,
+  },
+
   development: {
     client: "postgresql",
     connection: {
