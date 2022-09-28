@@ -9,6 +9,7 @@ exports.up = function (knex) {
     table.timestamp("updated_at").notNullable().defaultTo(knex.fn.now());
     table.uuid("created_by").references("users.id").index();
     table.uuid("channel").references("channels.id").index();
+    table.text("body").notNullable();
   });
 };
 

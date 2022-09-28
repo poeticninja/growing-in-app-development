@@ -65,6 +65,8 @@ const init = async () => {
   await pingDatabaseConnection();
   await knex.migrate.latest();
 
+  // TODO add health check route
+
   app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
   });
