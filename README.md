@@ -59,13 +59,10 @@ Chat App = Blah Blah
   - user
   - channels
 
-
 ### TODO:
 
-- create api for messages
 - add schema and api to handle notification and highlighting of new messages
-- improve database error handling 
+- improve database error handling
 - add model utils for common db operations
 - add logging
 - add auth
-- add api input validation with celebrate https://github.com/arb/celebrate

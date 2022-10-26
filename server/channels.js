@@ -1,31 +1,35 @@
 module.exports = ({ app, knex }) => {
   // load all channels by a user
-  app.get("/channels/:userId", async (req, res) => {
-    try {
-      const userId = req.params.userId;
+  app.get(
+    "/channels/:userId",
+    celebrate({
+      [Segments.PARAMS]: {
+        userId: Joi.string().uuid().required(),
+      },
+    }),
+    async (req, res) => {
+      try {
+        const userId = req.params.userId;
 
-      if (!userId) {
-        res.status(404).send("Missing id.");
+        const channelsUser = await knex("channels_users").where({
+          user: userId,
+        });
+
+        if (!channelsUser.length) {
+          res.status(404).send("channels not found");
+        }
+
+        const channels = await knex("channels").whereIn(
+          "id",
+          channelsUser.map((channel) => channelsUser.channel)
+        );
+
+        return res.send(channels);
+      } catch (error) {
+        res.status(500).send("Something broke!");
       }
-
-      const channelsUser = await knex("channels_users").where({
-        user: userId,
-      });
-
-      if (!channelsUser.length) {
-        res.status(404).send("channels not found");
-      }
-
-      const channels = await knex("channels").whereIn(
-        "id",
-        channelsUser.map((channel) => channelsUser.channel)
-      );
-
-      return res.send(channels);
-    } catch (error) {
-      res.status(500).send("Something broke!");
     }
-  });
+  );
 
   // TODO @poeticninja: Think about using active/inactive status deleting/archiving channels
   // delete a channel
@@ -44,13 +48,12 @@ module.exports = ({ app, knex }) => {
       // if this needs to be active/inactive then we need to add a column to the table
       await knex("channels").where({ id: userId }).del();
 
-
       res.send("Success");
     } catch (error) {
       res.status(500).send("Something broke!");
     }
   });
-  
+
   // creates a new channel, add a user or users to the channel
   // get the current user, create a channel object in the databse, then create a channel_user object in the database
   app.post("/channels", async (req, res) => {
@@ -87,17 +90,21 @@ module.exports = ({ app, knex }) => {
     try {
       // lookup the channel to make sure it exists
       const channel = await knex("channels").where({ id: channelId }).first();
-      
+
       // if channel doesnt exist return 404
       if (!channel) {
         res.status(404).send("Channel not found");
       }
 
       // get all channels_users for the channel
-      const channelsUsers = await knex("channels_users").where({ channel: channelId });
+      const channelsUsers = await knex("channels_users").where({
+        channel: channelId,
+      });
 
       // check if the current user is in the channel
-      const currentUserInChannel = channelsUsers.find((channelUser) => channelUser.user === userId);
+      const currentUserInChannel = channelsUsers.find(
+        (channelUser) => channelUser.user === userId
+      );
 
       if (!currentUserInChannel) {
         // return user not authorized
@@ -118,7 +125,6 @@ module.exports = ({ app, knex }) => {
     }
   });
 
-
   // remove a user from a channel
   app.delete("/channels/:channelId/:userId", async (req, res) => {
     const { userId, channelId } = req.params;
@@ -128,7 +134,9 @@ module.exports = ({ app, knex }) => {
         res.status(404).send("Missing id of item.");
       }
 
-      await knex("channels_users").where({ user: userId, channel: channelId }).del();
+      await knex("channels_users")
+        .where({ user: userId, channel: channelId })
+        .del();
 
       res.send("Success");
     } catch (error) {
